@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Our Places — A Love Diary, Dec 2025 – Oct 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#FFF6F8;--ink:#4A1D33;--muted:#8C6A7A;--card:#fff;--line:#F6DDE5;--accent:#D6336C;--wine:#5C1A3A;--blush:#FFE3EC}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans','Noto Sans Thai',system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:1200px;margin:0 auto;padding:0 22px}
+header.hero{position:relative;overflow:hidden;background:radial-gradient(900px 480px at 85% -10%,#F0658C77,transparent 60%),radial-gradient(800px 480px at 0% 120%,#B0407A77,transparent 60%),var(--wine);color:#fff;padding:64px 0 44px}
+.floaters span{position:absolute;bottom:-40px;color:#FF8FB1;opacity:.0;animation:rise linear infinite;pointer-events:none}
+@keyframes rise{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.55}100%{transform:translateY(-560px) rotate(25deg);opacity:0}}
+.eyebrow{letter-spacing:.18em;text-transform:uppercase;font-size:12px;opacity:.8;font-weight:600}
+.script{font-family:'Great Vibes',cursive;font-size:clamp(30px,4vw,44px);color:#FFB3C8;margin:6px 0 -6px;line-height:1.1}
+h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(36px,6vw,64px);line-height:1.04;margin:10px 0 14px;font-weight:800;position:relative}
+h1 em{font-style:italic;color:#FFB3C8}
+.lede{max-width:680px;font-size:17px;opacity:.88;position:relative}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:30px;position:relative}
+.stat{background:#ffffff14;border:1px solid #ffffff26;border-radius:18px;padding:14px 16px;backdrop-filter:blur(4px)}
+.stat b{display:block;font-family:'Playfair Display',serif;font-size:30px;line-height:1.1}
+.stat span{font-size:12.5px;opacity:.82}
+section{padding:40px 0 8px}
+h2{font-family:'Playfair Display',serif;font-size:29px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 18px;font-size:14.5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 4px 18px #D6336C0d}
+.mapgrid{display:grid;grid-template-columns:1fr 320px;gap:16px}
+@media(max-width:900px){.mapgrid{grid-template-columns:1fr}}
+#map{height:540px;border-radius:16px;background:#F8E9EE;z-index:1}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.btn{border:1px solid var(--line);background:#fff;padding:7px 14px;border-radius:999px;font:inherit;font-size:13.5px;cursor:pointer;color:var(--ink);transition:.15s}
+.btn:hover{border-color:#F0A6BE}
+.btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.play{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.timeline{display:flex;gap:12px;align-items:center;margin-top:12px}
+.timeline input{flex:1;accent-color:var(--accent)}
+.nowcard h3{margin:0;font-family:'Playfair Display',serif;font-size:22px}
+.nowcard .when{color:var(--muted);font-size:13px;margin-bottom:10px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12.5px;margin:3px 4px 3px 0;background:#FFF0F4;border:1px solid transparent;cursor:default}
+.chip i{font-style:normal;font-size:11px;line-height:1}
+.chip.off{opacity:.35}
+.legend .chip{cursor:pointer}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+.mapwarn{display:none;font-size:12.5px;background:#FFF0F4;border:1px solid #FBC4D4;padding:8px 12px;border-radius:10px;margin-bottom:10px}
+.hm{filter:drop-shadow(0 2px 3px #4A1D3340);transform-origin:center}
+.hm.beat{animation:beat .9s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}25%{transform:scale(1.28)}45%{transform:scale(1.05)}60%{transform:scale(1.2)}}
+.insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.ins{padding:18px;border-radius:20px;background:#fff;border:1px solid var(--line);position:relative;overflow:hidden}
+.ins:after{content:"♥";position:absolute;right:14px;top:8px;font-size:30px;color:#FCE1EA}
+.ins .k{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700}
+.ins .v{font-family:'Playfair Display',serif;font-size:25px;margin:4px 0 2px;line-height:1.15}
+.ins p{margin:0;color:var(--muted);font-size:13.5px}
+.chapters{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.chap{border-radius:22px;padding:22px;color:#fff;cursor:pointer;position:relative;overflow:hidden;min-height:180px;transition:transform .15s}
+.chap:hover{transform:translateY(-3px)}
+.chap:before{content:"♥";position:absolute;right:-10px;top:-24px;font-size:120px;opacity:.12}
+.chap .tag{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.88;font-weight:600}
+.chap h3{font-family:'Playfair Display',serif;font-size:23px;margin:6px 0}
+.chap p{margin:0;font-size:13.5px;opacity:.93}
+.chap .go{position:absolute;right:16px;bottom:12px;font-size:12px;opacity:.9}
+.cal{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.month h4{margin:0 0 6px;font-size:14px}
+.month h4 small{color:var(--muted);font-weight:500}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.mgrid .h{font-size:10px;color:var(--muted);text-align:center}
+.d{aspect-ratio:1;border-radius:6px;background:#FBEEF2;font-size:10px;display:flex;align-items:center;justify-content:center;color:#C9AAB6}
+.d.l1{background:#FCC2D7;color:#7A1F45}.d.l2{background:#F783AC;color:#fff}.d.l3{background:#D6336C;color:#fff}
+.d.tw{background:#9C36B5;color:#fff}.d.hh{background:#E8A33D;color:#fff}
+.d.has{cursor:pointer}.d.has:hover{outline:2px solid var(--ink)}
+.d.blank{background:transparent}
+.calkey{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-top:12px}
+.calkey span{display:inline-flex;align-items:center;gap:6px}
+.calkey i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.charts{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.charts2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:900px){.charts,.charts2{grid-template-columns:1fr}}
+.card h4{margin:0 0 10px;font-size:15px}
+.top{padding:0;margin:0}
+.top li{list-style:none;margin:0 0 9px}
+.bar{height:8px;border-radius:6px;background:#FBEEF2;overflow:hidden;margin-top:3px}
+.bar i{display:block;height:100%;border-radius:6px}
+.top .row{display:flex;justify-content:space-between;font-size:13.5px}
+.log{display:grid;gap:8px}
+.logm{font-family:'Playfair Display',serif;font-size:19px;margin:16px 0 4px}
+.entry{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:start;padding:10px 14px;background:#fff;border:1px solid var(--line);border-radius:14px;cursor:pointer}
+.entry:hover{border-color:#F0A6BE}
+.entry .dt{font-weight:600;font-size:13.5px}
+.entry .dt small{display:block;color:var(--muted);font-weight:500}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.filters input,.filters select{font:inherit;padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;font-size:14px;color:var(--ink)}
+.filters input{flex:1;min-width:200px}
+.unm{columns:3 220px;font-size:13px}
+.unm div{break-inside:avoid;margin-bottom:4px}
+footer{padding:44px 0 54px;color:var(--muted);font-size:12.5px;text-align:center}
+footer .script{color:var(--accent);font-size:34px;margin-bottom:6px}
+.leaflet-popup-content{font-family:'Plus Jakarta Sans','Noto Sans Thai',sans-serif;font-size:13px;color:#4A1D33}
+.pp b{font-size:14.5px}.pp .m{color:#8C6A7A;font-size:12px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="floaters" id="floaters"></div>
+  <div class="wrap">
+    <div class="eyebrow">Our places diary · Dec 2025 → Oct 2026</div>
+    <div class="script">To my favorite person...</div>
+    <h1>Happy Birthday, Frankie!</h1><em hidden id="hUnique">—</em> <h2>Thank you for spending your <em>33rd</em> birthday with me!</h2>
+    <p class="lede">Every date from 13 December 2025 to 16 October 2026: shabu nights, golf mornings, a week in Taiwan, a weekend by the sea in Hua Hin, and plenty of Bangkok in between. Thank you for being born and for beeing the best part of my life!</p>
+    <div class="stats">
+      <div class="stat"><b id="sDays">—</b><span>dates together</span></div>
+      <div class="stat"><b id="sStops">—</b><span>stops along the way</span></div>
+      <div class="stat"><b id="sUnique">—</b><span>different places</span></div>
+      <div class="stat"><b id="sSpan">—</b><span>days in this diary</span></div>
+      <div class="stat"><b id="sFav">—</b><span>our favourite spot</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section>
+  <h2>💞 Replay our year</h2>
+  <p class="sub">Each heart grows with every visit. Press play to step through our dates one by one, or tap a heart to see when we went.</p>
+  <div class="mapwarn" id="mapWarn">The map background didn't load in this preview window. The hearts still work. Download the .html file and open it in a browser to see the full street map.</div>
+  <div class="mapgrid">
+    <div class="card">
+      <div class="toolbar">
+        <button class="btn on" data-reg="bkk">Bangkok</button>
+        <button class="btn" data-reg="hh">Hua Hin</button>
+        <button class="btn" data-reg="tw">Taiwan</button>
+        <button class="btn" data-reg="all">Everywhere</button>
+      </div>
+      <div id="map"></div>
+      <div class="timeline">
+        <button class="btn play" id="playBtn">▶ Play our story</button>
+        <input type="range" id="tl" min="0" max="85" value="85">
+        <button class="btn" id="allBtn">Show all</button>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card nowcard" id="nowCard"></div>
+      <div class="card">
+        <h4>Kinds of dates <span style="font-weight:400;color:var(--muted);font-size:12px">(tap to toggle)</span></h4>
+        <div class="legend" id="legend"></div>
+        <div class="note">Hearts are approximate: landmarks sit close to the real spot, smaller restaurants at neighbourhood level. Chains with no branch recorded aren't on the map (listed at the bottom).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>💌 Little things we noticed</h2>
+  <p class="sub">Patterns hiding in our diary.</p>
+  <div class="insights" id="insights"></div>
+</section>
+
+<section>
+  <h2>📖 Our chapters</h2>
+  <p class="sub">The moments that stand out. Tap a card to go there on the map.</p>
+  <div class="chapters" id="chapters"></div>
+</section>
+
+<section>
+  <h2>📅 Our calendar</h2>
+  <p class="sub">Each square is a day. Deeper pink means more stops that day. Tap a day to see it on the map.</p>
+  <div class="card">
+    <div class="cal" id="cal"></div>
+    <div class="calkey">
+      <span><i style="background:#FCC2D7"></i>1 stop</span>
+      <span><i style="background:#F783AC"></i>2 stops</span>
+      <span><i style="background:#D6336C"></i>3+ stops</span>
+      <span><i style="background:#9C36B5"></i>Taiwan</span>
+      <span><i style="background:#E8A33D"></i>Hua Hin</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>📊 Love, by the numbers</h2>
+  <p class="sub">Our dates by month, weekday and kind.</p>
+  <div class="charts">
+    <div class="card"><h4>Dates per month</h4><div style="height:260px"><canvas id="cMonth"></canvas></div></div>
+    <div class="card"><h4>What we like to do</h4><div style="height:260px"><canvas id="cCat"></canvas></div></div>
+  </div>
+  <div class="charts2">
+    <div class="card"><h4>Our favourite days of the week</h4><div style="height:220px"><canvas id="cWd"></canvas></div></div>
+    <div class="card"><h4>Places we keep going back to</h4><ul class="top" id="topList"></ul></div>
+  </div>
+</section>
+
+<section>
+  <h2>🔍 Every date</h2>
+  <p class="sub">Search any place or filter by kind. Tap an entry to see it on the map.</p>
+  <div class="filters">
+    <input id="q" placeholder="Search a place, e.g. shabu, Hyde, golf, ก๋วยเตี๋ยว…">
+    <select id="catSel"><option value="">All kinds</option></select>
+  </div>
+  <div class="log" id="logList"></div>
+</section>
+
+<!-- <section> -->
+  <!-- <h2>📍 Not on the map yet</h2> -->
+  <!-- <p class="sub">These places either had no branch recorded (chains) or I couldn't confirm the address. Add coordinates to the <code>PLACES</code> table in the file and they'll get a heart too.</p> -->
+  <div hidden class="card unm" id="unmapped"></div>
+<!-- </section> -->
+ 
+
+</main>
+<footer class="wrap">
+  <div class="script">to many more places together</div>
+  <h1>I LOVE YOU!</h1>
+</footer>
+
+<script>
+const LOG_RAW = `
+2025-12-13|PAII @ W Hotel
+2025-12-19|La Dotta
+2025-12-26|Jidori;Alonetogether Bar
+2026-01-01|DIB Museum
+2026-01-02|Dokidoki
+2026-01-04|Urbana
+2026-01-17|Lazy Daisy;Il Bolognese;Crimson Room
+2026-01-20|Somtum Nua
+2026-01-24|CQK
+2026-01-25|Dokidoki
+2026-01-30|Hyde Sukhumvit 13
+2026-02-02|MK
+2026-02-07|Tonkin Annam;BKKDW
+2026-02-08|เตี๋ยวศรี;Dokidoki
+2026-02-14|Urbana
+2026-02-15|Tokyo Grill
+2026-02-18|Hitori
+2026-02-20|ครัวดอกไม้ขาว
+2026-02-22|Chinatown
+2026-02-27|So Dong Gong
+2026-02-28|Army Golf Course
+2026-03-01|Hyde Sukhumvit 13
+2026-03-05|QSNCC
+2026-03-07|Ar-Ta-Rote
+2026-03-15|Yakiniku;Healthland;Hitori
+2026-03-18|Bornga;Brass House
+2026-03-21|Zanotti
+2026-03-22|BBQ Plaza
+2026-03-23|Hyde Sukhumvit 13
+2026-03-27|Hyde Sukhumvit 13
+2026-03-29|นภนานา;Makro
+2026-04-03|Burn Bussaba @ Terminal 21
+2026-04-05|Yuu;After You
+2026-04-11|Hyde Sukhumvit 13
+2026-04-12|Taipei
+2026-04-13|Taipei
+2026-04-14|Alishan
+2026-04-15|Alishan
+2026-04-16|Taichung
+2026-04-17|Taipei
+2026-04-24|หอมรัญจวน
+2026-04-26|ในเหมือง
+2026-04-30|Hyde Sukhumvit 13
+2026-05-01|Beyond Bread;Aburi Ishida
+2026-05-02|Ok Shabu
+2026-05-03|ก๋วยเตี๋ยวสายน้ำผึ้ง;ASA @ Muang Thong Thani
+2026-05-08|Kizahashi
+2026-05-15|Kennabe Sukiyaki
+2026-05-16|Arno's
+2026-05-17|Hyde Sukhumvit 13
+2026-05-22|Hikiniku to Come @ Dusit
+2026-05-23|Lon Lon
+2026-05-29|Piscari
+2026-06-06|Khao;Baobao Bar
+2026-06-16|MK
+2026-06-21|Foodie;Nirvana Beyond
+2026-06-27|Ramen Tei;The City Rama 3;Ok Shabu
+2026-07-03|Doo Rae
+2026-07-08|Coco Ichibanya
+2026-07-09|Eat at home
+2026-07-10|Hyde Sukhumvit 13
+2026-07-14|Khao-Soi-I
+2026-07-15|Ohkaju at home
+2026-07-18|Andaz One Bangkok
+2026-07-25|Pizzeria Da Michele;Ok Shabu
+2026-08-06|Kumpoy;Creamery
+2026-08-07|Hyde Sukhumvit 13
+2026-08-08|Hyde Sukhumvit 13
+2026-08-14|Smokin' Pug
+2026-08-15|Breakfast Story;Muang Ake Driving Range
+2026-08-23|Unico Grande Golf Course
+2026-08-28|ICONSIAM
+2026-09-04|Hyde Sukhumvit 13
+2026-09-05|Fran's;Krua Khun Toom;Hua Hin Night Market;Marrakesh Hua Hin
+2026-09-06|Pineapple Valley Golf;Duck Noodle;Tanya's;InterContinental Hua Hin;Classic Car Museum
+2026-09-07|Vana Nava;Coco Ichibanya
+2026-09-11|Saku
+2026-09-13|Avilion Rama 2;Thonburi Golf Driving Range;Hitori @ Intersect Rama 3
+2026-09-18|Vietnamese and More
+2026-09-19|Thongsmith @ EmSphere;Adler Chan Road
+2026-09-24|MK
+2026-09-26|Zanotti
+2026-09-27|Heng Chun Seng
+2026-10-02|Don Mueang Airport
+2026-10-03|Arunwan;Aromdee Studio;Loft Thai Spa;Ok Shabu
+2026-10-08|MK
+`;
+
+// name: [category, precision ('pin' | 'area' | null), lat, lng, area]
+const PLACES = {
+"PAII @ W Hotel":["Dining","pin",13.7224,100.5292,"Sathorn"],
+"La Dotta":["Dining","area",13.7307,100.5836,"Thonglor"],
+"Jidori":["Dining",null,null,null,"Bangkok"],
+"Alonetogether Bar":["Bar",null,null,null,"Bangkok"],
+"DIB Museum":["Culture","area",13.7148,100.5786,"Khlong Toei"],
+"Dokidoki":["Dining",null,null,null,"Bangkok"],
+"Urbana":["Dining","area",13.7378,100.5434,"Lang Suan"],
+"Lazy Daisy":["Café & Dessert",null,null,null,"Bangkok"],
+"Il Bolognese":["Dining",null,null,null,"Bangkok"],
+"Crimson Room":["Bar",null,null,null,"Bangkok"],
+"Somtum Nua":["Dining","pin",13.7447,100.5338,"Siam Square"],
+"CQK":["Dining",null,null,null,"Bangkok"],
+"Hyde Sukhumvit 13":["Hangout","pin",13.7432,100.5578,"Sukhumvit 13"],
+"MK":["Dining",null,null,null,"Chain, branch not recorded"],
+"Tonkin Annam":["Dining","pin",13.7466,100.4928,"Tha Tien"],
+"BKKDW":["Culture","area",13.7270,100.5145,"Charoen Krung"],
+"เตี๋ยวศรี":["Dining",null,null,null,"Bangkok"],
+"Tokyo Grill":["Dining",null,null,null,"Bangkok"],
+"Hitori":["Dining",null,null,null,"Chain, branch not recorded"],
+"ครัวดอกไม้ขาว":["Dining",null,null,null,"Bangkok"],
+"Chinatown":["Culture","pin",13.7398,100.5096,"Yaowarat"],
+"So Dong Gong":["Dining",null,null,null,"Bangkok"],
+"Army Golf Course":["Golf","area",13.8560,100.6260,"Ram Inthra"],
+"QSNCC":["Culture","pin",13.7230,100.5590,"Rama IV"],
+"Ar-Ta-Rote":["Dining",null,null,null,"Bangkok"],
+"Yakiniku":["Dining",null,null,null,"Bangkok"],
+"Healthland":["Wellness",null,null,null,"Chain, branch not recorded"],
+"Bornga":["Dining",null,null,null,"Chain, branch not recorded"],
+"Brass House":["Bar",null,null,null,"Bangkok"],
+"Zanotti":["Dining","pin",13.7268,100.5375,"Sala Daeng"],
+"BBQ Plaza":["Dining",null,null,null,"Chain, branch not recorded"],
+"นภนานา":["Dining",null,null,null,"Bangkok"],
+"Makro":["Shopping",null,null,null,"Chain, branch not recorded"],
+"Burn Bussaba @ Terminal 21":["Dining","pin",13.7379,100.5600,"Asok"],
+"Yuu":["Dining",null,null,null,"Bangkok"],
+"After You":["Café & Dessert",null,null,null,"Chain, branch not recorded"],
+"Taipei":["Travel","area",25.0330,121.5654,"Taiwan"],
+"Alishan":["Travel","area",23.5100,120.8020,"Taiwan"],
+"Taichung":["Travel","area",24.1477,120.6736,"Taiwan"],
+"หอมรัญจวน":["Dining",null,null,null,"Bangkok"],
+"ในเหมือง":["Dining",null,null,null,"Bangkok"],
+"Beyond Bread":["Café & Dessert",null,null,null,"Bangkok"],
+"Aburi Ishida":["Dining",null,null,null,"Bangkok"],
+"Ok Shabu":["Dining",null,null,null,"Chain, branch not recorded"],
+"ก๋วยเตี๋ยวสายน้ำผึ้ง":["Dining",null,null,null,"Bangkok"],
+"ASA @ Muang Thong Thani":["Culture","area",13.9120,100.5470,"Muang Thong Thani"],
+"Kizahashi":["Dining",null,null,null,"Bangkok"],
+"Kennabe Sukiyaki":["Dining",null,null,null,"Bangkok"],
+"Arno's":["Dining",null,null,null,"Bangkok"],
+"Hikiniku to Come @ Dusit":["Dining","pin",13.7290,100.5360,"Silom / Rama IV"],
+"Lon Lon":["Dining",null,null,null,"Bangkok"],
+"Piscari":["Dining",null,null,null,"Bangkok"],
+"Khao":["Dining",null,null,null,"Bangkok"],
+"Baobao Bar":["Bar",null,null,null,"Bangkok"],
+"Foodie":["Dining",null,null,null,"Bangkok"],
+"Nirvana Beyond":["Dining",null,null,null,"Bangkok"],
+"Ramen Tei":["Dining",null,null,null,"Bangkok"],
+"The City Rama 3":["Shopping","area",13.6900,100.5350,"Rama 3"],
+"Doo Rae":["Dining",null,null,null,"Bangkok"],
+"Coco Ichibanya":["Dining",null,null,null,"Chain, branch not recorded"],
+"Eat at home":["At home",null,null,null,"Home"],
+"Ohkaju at home":["At home",null,null,null,"Home"],
+"Khao-Soi-I":["Dining",null,null,null,"Bangkok"],
+"Andaz One Bangkok":["Dining","pin",13.7265,100.5470,"One Bangkok"],
+"Pizzeria Da Michele":["Dining",null,null,null,"Bangkok"],
+"Kumpoy":["Dining",null,null,null,"Bangkok"],
+"Creamery":["Café & Dessert",null,null,null,"Bangkok"],
+"Smokin' Pug":["Dining",null,null,null,"Bangkok"],
+"Breakfast Story":["Café & Dessert",null,null,null,"Bangkok"],
+"Muang Ake Driving Range":["Golf","area",13.9600,100.5900,"Pathum Thani"],
+"Unico Grande Golf Course":["Golf",null,null,null,"Greater Bangkok"],
+"ICONSIAM":["Shopping","pin",13.7266,100.5103,"Khlong San"],
+"Fran's":["Café & Dessert","area",12.5660,99.9600,"Hua Hin"],
+"Krua Khun Toom":["Dining","area",12.5750,99.9530,"Hua Hin"],
+"Hua Hin Night Market":["Shopping","area",12.5717,99.9567,"Hua Hin"],
+"Marrakesh Hua Hin":["Stay","area",12.5390,99.9640,"Hua Hin"],
+"Pineapple Valley Golf":["Golf","area",12.5500,99.8700,"Hua Hin"],
+"Duck Noodle":["Dining","area",12.5690,99.9520,"Hua Hin"],
+"Tanya's":["Dining","area",12.5630,99.9560,"Hua Hin"],
+"InterContinental Hua Hin":["Stay","area",12.5605,99.9625,"Hua Hin"],
+"Classic Car Museum":["Culture","area",12.5550,99.9400,"Hua Hin"],
+"Vana Nava":["Culture","area",12.5465,99.9620,"Hua Hin"],
+"Saku":["Dining",null,null,null,"Bangkok"],
+"Avilion Rama 2":["Dining","area",13.6700,100.4400,"Rama 2"],
+"Thonburi Golf Driving Range":["Golf","area",13.7000,100.4600,"Thonburi"],
+"Hitori @ Intersect Rama 3":["Dining","area",13.6880,100.5380,"Rama 3"],
+"Vietnamese and More":["Dining",null,null,null,"Bangkok"],
+"Thongsmith @ EmSphere":["Dining","pin",13.7305,100.5690,"Phrom Phong"],
+"Adler Chan Road":["Dining","area",13.7050,100.5350,"Chan Road"],
+"MK @ Terminal 21":["Dining","pin",13.7373,100.5608,"Asok"],
+"Heng Chun Seng":["Dining",null,null,null,"Bangkok"],
+"Don Mueang Airport":["Travel","pin",13.9126,100.6068,"Don Mueang"],
+"Arunwan":["Dining",null,null,null,"Bangkok"],
+"Aromdee Studio":["Culture",null,null,null,"Bangkok"],
+"Loft Thai Spa":["Wellness",null,null,null,"Bangkok"]
+};
+
+const CAT = {"Dining":"#D6336C","Hangout":"#862E9C","Culture":"#E8A33D","Travel":"#9C36B5","Café & Dessert":"#F783AC","Golf":"#7FA86A","Bar":"#5F3DC4","Shopping":"#E064B7","Wellness":"#4FB3BF","Stay":"#B197FC","At home":"#C9A3B3"};
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MONL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const WDL = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+function pdt(s){const a=s.split('-').map(Number);return new Date(Date.UTC(a[0],a[1]-1,a[2]));}
+function fmt(s){const d=pdt(s);return WD[d.getUTCDay()]+" "+d.getUTCDate()+" "+MON[d.getUTCMonth()]+" "+d.getUTCFullYear();}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function region(n){const a=PLACES[n]?PLACES[n][4]:"";return a==="Taiwan"?"tw":a==="Hua Hin"?"hh":"bkk";}
+
+// floating hearts in the hero
+(function(){
+  const f=document.getElementById("floaters"); let h="";
+  for(let k=0;k<16;k++){
+    const left=Math.round(Math.random()*100), size=10+Math.round(Math.random()*22), dur=7+Math.random()*9, delay=-Math.random()*14;
+    h+='<span style="left:'+left+'%;font-size:'+size+'px;animation-duration:'+dur.toFixed(1)+'s;animation-delay:'+delay.toFixed(1)+'s">♥</span>';
+  }
+  f.innerHTML=h;
+})();
+
+const LOG = LOG_RAW.trim().split("\n").map((l,i)=>{const p=l.split("|");return {i:i,date:p[0],dt:pdt(p[0]),places:p[1].split(";").map(s=>s.trim())};});
+const VISITS = {};
+LOG.forEach(e=>e.places.forEach(p=>{(VISITS[p]=VISITS[p]||[]).push(e.date);}));
+const allStops = LOG.reduce((s,e)=>s+e.places.length,0);
+const uniq = Object.keys(VISITS);
+const ranked = uniq.slice().sort((a,b)=>VISITS[b].length-VISITS[a].length||a.localeCompare(b));
+function chip(n){const c=PLACES[n]?PLACES[n][0]:"Dining";return '<span class="chip"><i style="color:'+CAT[c]+'">♥</i>'+esc(n)+'</span>';}
+
+// ---------- hero stats
+const spanDays = Math.round((LOG[LOG.length-1].dt-LOG[0].dt)/864e5)+1;
+document.getElementById("hUnique").textContent = uniq.length;
+document.getElementById("sDays").textContent = LOG.length;
+document.getElementById("sStops").textContent = allStops;
+document.getElementById("sUnique").textContent = uniq.length;
+document.getElementById("sSpan").textContent = spanDays;
+document.getElementById("sFav").textContent = VISITS[ranked[0]].length+"×";
+document.getElementById("sFav").nextElementSibling.textContent = ranked[0]+", our favourite spot";
+
+// ---------- map
+let map=null, layer=null, cur=null, curReg="bkk", timer=null;
+const activeCats = new Set(Object.keys(CAT));
+const VIEWS = {bkk:{c:[13.775,100.56],z:11},hh:{c:[12.558,99.93],z:12},tw:{c:[24.15,121.0],z:8}};
+const slider = document.getElementById("tl");
+slider.max = LOG.length-1; slider.value = LOG.length-1;
+
+function heartIcon(color,size,today){
+  const h = Math.round(size*29/32);
+  const svg='<svg viewBox="0 0 32 29" width="'+size+'" height="'+h+'"><path d="M16 28S1.5 19.4 1.5 9.4C1.5 4.9 5 1.5 9.3 1.5c2.8 0 5.2 1.4 6.7 3.6 1.5-2.2 3.9-3.6 6.7-3.6 4.3 0 7.8 3.4 7.8 7.9C30.5 19.4 16 28 16 28z" fill="'+color+'" stroke="'+(today?'#4A1D33':'#fff')+'" stroke-width="'+(today?2.4:1.6)+'"/></svg>';
+  return L.divIcon({html:'<div class="hm'+(today?' beat':'')+'">'+svg+'</div>',className:'',iconSize:[size,h],iconAnchor:[size/2,h/2],popupAnchor:[0,-h/2]});
+}
+function initMap(){
+  if(typeof L==="undefined"){document.getElementById("map").innerHTML='<div style="padding:30px;color:#8C6A7A">The map library couldn\'t load in this preview. Download the file and open it in a browser to see the map.</div>';return;}
+  map = L.map("map",{zoomControl:true,scrollWheelZoom:false}).setView(VIEWS.bkk.c,VIEWS.bkk.z);
+  let warned=false;
+  const t = L.tileLayer("https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_4gzp_1_e3bd6c51ea8630af625da2be",{attribution:"© OpenStreetMap, © CARTO",subdomains:"abcd",maxZoom:19});
+  t.on("tileerror",()=>{if(!warned){warned=true;document.getElementById("mapWarn").style.display="block";}});
+  t.addTo(map);
+  layer = L.layerGroup().addTo(map);
+}
+function draw(upto){
+  if(!map) return;
+  layer.clearLayers();
+  const limit = upto==null?null:LOG[upto].date;
+  const today = upto==null?[]:LOG[upto].places;
+  Object.keys(PLACES).forEach(n=>{
+    const p=PLACES[n]; if(p[2]==null||!VISITS[n]) return;
+    if(!activeCats.has(p[0])) return;
+    const ds = VISITS[n].filter(d=>limit==null||d<=limit);
+    if(!ds.length) return;
+    const isToday = today.includes(n);
+    const size = Math.round(16+Math.sqrt(ds.length)*7);
+    const html = '<div class="pp"><b>'+esc(n)+'</b><div class="m">'+esc(p[0])+' · '+esc(p[4])+(p[1]==="area"?' · approximate location':'')+'</div><div style="margin-top:6px"><b>'+ds.length+'</b> time'+(ds.length>1?'s':'')+' together:<br>'+ds.map(fmt).join('<br>')+'</div></div>';
+    L.marker([p[2],p[3]],{icon:heartIcon(CAT[p[0]],size,isToday),zIndexOffset:isToday?1000:ds.length*10}).bindPopup(html).addTo(layer);
+  });
+}
+function setRegion(reg){
+  curReg = reg;
+  document.querySelectorAll("[data-reg]").forEach(b=>b.classList.toggle("on",b.getAttribute("data-reg")===reg));
+  if(!map) return;
+  if(reg==="all"){
+    const pts = Object.values(PLACES).filter(p=>p[2]!=null).map(p=>[p[2],p[3]]);
+    map.flyToBounds(L.latLngBounds(pts).pad(0.1),{duration:1});
+  } else map.flyTo(VIEWS[reg].c,VIEWS[reg].z,{duration:1.1});
+}
+document.querySelectorAll("[data-reg]").forEach(b=>b.addEventListener("click",()=>setRegion(b.getAttribute("data-reg"))));
+
+function nowAll(){
+  const mapped = uniq.filter(n=>PLACES[n]&&PLACES[n][2]!=null).length;
+  document.getElementById("nowCard").innerHTML = '<div class="when">Our whole story so far · 13 Dec 2025 – 8 Oct 2026</div><h3>'+LOG.length+' dates together</h3><p style="font-size:13.5px;color:#8C6A7A;margin:8px 0 0">'+mapped+' of '+uniq.length+' places have a heart on the map. Move the slider or press play to relive them one by one.</p>';
+}
+function nowDay(i){
+  const e = LOG[i];
+  const prev = i>0?Math.round((e.dt-LOG[i-1].dt)/864e5):null;
+  const unm = e.places.filter(n=>!PLACES[n]||PLACES[n][2]==null);
+  document.getElementById("nowCard").innerHTML = '<div class="when">Date '+(i+1)+' of '+LOG.length+(prev!=null?' · '+prev+' day'+(prev>1?'s':'')+' after the last one':' · where it begins')+'</div><h3>'+fmt(e.date)+'</h3><div style="margin-top:8px">'+e.places.map(chip).join("")+'</div>'+(unm.length?'<div class="note">Not on the map: '+unm.map(esc).join(", ")+'</div>':'');
+}
+function setDay(i,follow){
+  cur = i; slider.value = i; draw(i); nowDay(i);
+  if(follow){
+    const m = LOG[i].places.find(n=>PLACES[n]&&PLACES[n][2]!=null);
+    if(m){const r=region(m); if(r!==curReg) setRegion(r);}
+  }
+}
+function showAll(){stop(); cur=null; slider.value=LOG.length-1; draw(null); nowAll();}
+function stop(){if(timer){clearInterval(timer);timer=null;} document.getElementById("playBtn").textContent="▶ Play our story";}
+document.getElementById("playBtn").addEventListener("click",()=>{
+  if(timer){stop();return;}
+  let start = (cur==null||cur>=LOG.length-1)?0:cur+1;
+  setDay(start,true);
+  document.getElementById("playBtn").textContent="❚❚ Pause";
+  timer = setInterval(()=>{ if(cur>=LOG.length-1){stop();return;} setDay(cur+1,true); },900);
+});
+slider.addEventListener("input",()=>{stop(); setDay(+slider.value,true);});
+document.getElementById("allBtn").addEventListener("click",showAll);
+function goToDay(i){
+  stop(); setDay(i,true);
+  document.getElementById("map").scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+// legend
+const catCounts = {};
+LOG.forEach(e=>e.places.forEach(n=>{const c=PLACES[n][0];catCounts[c]=(catCounts[c]||0)+1;}));
+const legend = document.getElementById("legend");
+Object.keys(CAT).forEach(c=>{
+  const s=document.createElement("span"); s.className="chip";
+  s.innerHTML='<i style="color:'+CAT[c]+'">♥</i>'+esc(c)+' <small style="color:#8C6A7A">'+(catCounts[c]||0)+'</small>';
+  s.addEventListener("click",()=>{ if(activeCats.has(c)){activeCats.delete(c);s.classList.add("off");}else{activeCats.add(c);s.classList.remove("off");} draw(cur); });
+  legend.appendChild(s);
+});
+
+// ---------- insights
+(function(){
+  const byM = {}; LOG.forEach(e=>{const k=e.date.slice(0,7); byM[k]=byM[k]||{days:0,stops:0}; byM[k].days++; byM[k].stops+=e.places.length;});
+  const busiestM = Object.keys(byM).sort((a,b)=>byM[b].stops-byM[a].stops)[0];
+  const wd = [0,0,0,0,0,0,0]; LOG.forEach(e=>wd[e.dt.getUTCDay()]++);
+  const topWd = wd.indexOf(Math.max(...wd));
+  const weekend = LOG.filter(e=>[0,5,6].includes(e.dt.getUTCDay())).length;
+  let gap=0,gi=0; for(let i=1;i<LOG.length;i++){const g=Math.round((LOG[i].dt-LOG[i-1].dt)/864e5); if(g>gap){gap=g;gi=i;}}
+  const bigDay = LOG.slice().sort((a,b)=>b.places.length-a.places.length)[0];
+  const repeat = uniq.filter(n=>VISITS[n].length>1).length;
+  const shabu = ["Ok Shabu","MK","Hitori","Hitori @ Intersect Rama 3","Kennabe Sukiyaki"].reduce((s,n)=>s+(VISITS[n]||[]).length,0);
+  const golf = LOG.filter(e=>e.places.some(n=>PLACES[n][0]==="Golf")).length;
+  const y = byM[busiestM]; const bm = pdt(busiestM+"-01");
+  const fav = VISITS[ranked[0]];
+  const items = [
+    ["Our place", ranked[0], fav.length+" visits, roughly one every "+Math.round((pdt(fav.slice(-1)[0])-pdt(fav[0]))/864e5/(fav.length-1))+" days between Jan and Sep."],
+    ["Date night", WDL[topWd]+"s", wd[topWd]+" of "+LOG.length+" dates fell on a "+WDL[topWd]+", and "+Math.round(weekend/LOG.length*100)+"% were Friday to Sunday."],
+    ["Busiest month", MONL[bm.getUTCMonth()]+" "+bm.getUTCFullYear(), y.stops+" stops over "+y.days+" days, thanks to the Hua Hin getaway."],
+    ["Our longest day", fmt(bigDay.date), bigDay.places.length+" stops in Hua Hin: golf, duck noodles, a car museum and more."],
+    ["Hot-pot is our love language", shabu+" shabu & suki nights", "Ok Shabu, MK, Hitori and Kennabe together. Ok Shabu alone appears "+VISITS["Ok Shabu"].length+" times."],
+    ["Always somewhere new", Math.round((uniq.length-repeat)/uniq.length*100)+"% first-time places", (uniq.length-repeat)+" of "+uniq.length+" places we visited only once."],
+    ["Longest time apart in the diary", gap+" days", "Between "+fmt(LOG[gi-1].date)+" and "+fmt(LOG[gi].date)+"."],
+    ["Golf dates", golf+" days", "One in February, then four between mid-August and mid-September."]
+  ];
+  document.getElementById("insights").innerHTML = items.map(x=>'<div class="ins"><div class="k">'+esc(x[0])+'</div><div class="v">'+esc(x[1])+'</div><p>'+esc(x[2])+'</p></div>').join("");
+})();
+
+// ---------- chapters
+const CHAPS = [
+  {tag:"12–17 Apr 2026 · 6 days",title:"Our Taiwan escape",text:"Taipei, up into the Alishan mountains, then back through Taichung. Our one trip abroad in the diary.",bg:"linear-gradient(135deg,#9C36B5,#5F1F73)",reg:"tw",date:"2026-04-14"},
+  {tag:"5–7 Sep 2026 · 11 stops",title:"A weekend by the sea in Hua Hin",text:"Night market, Pineapple Valley golf, the InterContinental and Vana Nava. 11 stops in 3 days.",bg:"linear-gradient(135deg,#E8A33D,#C2255C)",reg:"hh",date:"2026-09-06"},
+  {tag:"Feb – Sep 2026 · 5 days",title:"Golf dates",text:"Army Golf Course in February, then driving ranges and courses almost every weekend from mid-August.",bg:"linear-gradient(135deg,#7FA86A,#3F6B4A)",reg:"bkk",date:"2026-08-23"},
+  {tag:"Jan – Sep 2026 · 11 visits",title:"Our regular: Hyde Sukhumvit 13",text:"The place we kept coming back to, including two nights in a row in August.",bg:"linear-gradient(135deg,#D6336C,#5C1A3A)",reg:"bkk",date:"2026-08-08"}
+];
+document.getElementById("chapters").innerHTML = CHAPS.map((c,k)=>'<div class="chap" data-k="'+k+'" style="background:'+c.bg+'"><div class="tag">'+c.tag+'</div><h3>'+c.title+'</h3><p>'+c.text+'</p><div class="go">Show on map →</div></div>').join("");
+document.querySelectorAll(".chap").forEach(el=>el.addEventListener("click",()=>{
+  const c = CHAPS[+el.getAttribute("data-k")];
+  const i = LOG.findIndex(e=>e.date===c.date);
+  stop(); setDay(i,false); setRegion(c.reg);
+  document.getElementById("map").scrollIntoView({behavior:"smooth",block:"center"});
+}));
+
+// ---------- calendar
+(function(){
+  const byDate = {}; LOG.forEach(e=>byDate[e.date]=e);
+  let html="";
+  for(let y=2025,m=11; y<2026||(y===2026&&m<=9); ){
+    const first = new Date(Date.UTC(y,m,1)); const dim = new Date(Date.UTC(y,m+1,0)).getUTCDate();
+    const off = (first.getUTCDay()+6)%7;
+    let cnt=0, cells="";
+    ["M","T","W","T","F","S","S"].forEach(h=>cells+='<div class="h">'+h+'</div>');
+    for(let k=0;k<off;k++) cells+='<div class="d blank"></div>';
+    for(let d=1; d<=dim; d++){
+      const key = y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+      const e = byDate[key];
+      if(e){
+        cnt++;
+        const reg = region(e.places[0]);
+        const cls = reg==="tw"?"tw":reg==="hh"?"hh":(e.places.length>=3?"l3":e.places.length===2?"l2":"l1");
+        cells+='<div class="d has '+cls+'" data-i="'+e.i+'" title="'+esc(fmt(key)+": "+e.places.join(", "))+'">'+d+'</div>';
+      } else cells+='<div class="d">'+d+'</div>';
+    }
+    html+='<div class="month"><h4>'+MONL[m]+' '+y+' <small>· '+cnt+' date'+(cnt===1?'':'s')+'</small></h4><div class="mgrid">'+cells+'</div></div>';
+    m++; if(m>11){m=0;y++;}
+  }
+  const cal = document.getElementById("cal"); cal.innerHTML = html;
+  cal.querySelectorAll(".d.has").forEach(el=>el.addEventListener("click",()=>goToDay(+el.getAttribute("data-i"))));
+})();
+
+// ---------- charts
+(function(){
+  const keys=[],days=[],stops=[];
+  LOG.forEach(e=>{const k=e.date.slice(0,7); let j=keys.indexOf(k); if(j<0){keys.push(k);days.push(0);stops.push(0);j=keys.length-1;} days[j]++; stops[j]+=e.places.length;});
+  const labels = keys.map(k=>{const d=pdt(k+"-01");return MON[d.getUTCMonth()]+" '"+String(d.getUTCFullYear()).slice(2);});
+  const wd=[0,0,0,0,0,0,0]; LOG.forEach(e=>wd[(e.dt.getUTCDay()+6)%7]++);
+  const top = ranked.slice(0,8); const mx = VISITS[top[0]].length;
+  document.getElementById("topList").innerHTML = top.map(n=>'<li><div class="row"><span>'+esc(n)+'</span><b>'+VISITS[n].length+'</b></div><div class="bar"><i style="width:'+(VISITS[n].length/mx*100)+'%;background:'+CAT[PLACES[n][0]]+'"></i></div></li>').join("");
+  if(typeof Chart==="undefined") return;
+  Chart.defaults.font.family="'Plus Jakarta Sans','Noto Sans Thai',sans-serif"; Chart.defaults.color="#8C6A7A";
+  new Chart(document.getElementById("cMonth"),{type:"bar",data:{labels:labels,datasets:[{label:"Dates",data:days,backgroundColor:"#5C1A3A",borderRadius:8},{label:"Stops",data:stops,backgroundColor:"#F783AC",borderRadius:8}]},options:{maintainAspectRatio:false,plugins:{legend:{position:"bottom"}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:{color:"#FBEEF2"}}}}});
+  const cats = Object.keys(CAT).filter(c=>catCounts[c]);
+  new Chart(document.getElementById("cCat"),{type:"doughnut",data:{labels:cats,datasets:[{data:cats.map(c=>catCounts[c]),backgroundColor:cats.map(c=>CAT[c]),borderWidth:2,borderColor:"#fff"}]},options:{maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"right",labels:{boxWidth:10,font:{size:11}}}}}});
+  new Chart(document.getElementById("cWd"),{type:"bar",data:{labels:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],datasets:[{label:"Dates",data:wd,backgroundColor:wd.map((v,i)=>i>=4?"#D6336C":"#F6D3DF"),borderRadius:8}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,grid:{color:"#FBEEF2"}}}}});
+})();
+
+// ---------- log
+const catSel = document.getElementById("catSel");
+Object.keys(CAT).forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;catSel.appendChild(o);});
+function renderLog(){
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const c = catSel.value;
+  let html="", lastM="", n=0;
+  LOG.forEach(e=>{
+    const ok = e.places.some(p=>(!q||p.toLowerCase().includes(q)||PLACES[p][4].toLowerCase().includes(q)||PLACES[p][0].toLowerCase().includes(q))&&(!c||PLACES[p][0]===c));
+    if(!ok) return; n++;
+    const m = MONL[e.dt.getUTCMonth()]+" "+e.dt.getUTCFullYear();
+    if(m!==lastM){html+='<div class="logm">'+m+'</div>';lastM=m;}
+    html+='<div class="entry" data-i="'+e.i+'"><div class="dt">'+e.dt.getUTCDate()+' '+MON[e.dt.getUTCMonth()]+'<small>'+WDL[e.dt.getUTCDay()]+'</small></div><div>'+e.places.map(chip).join("")+'</div></div>';
+  });
+  if(!n) html='<div class="note">No matches.</div>';
+  const box=document.getElementById("logList"); box.innerHTML=html;
+  box.querySelectorAll(".entry").forEach(el=>el.addEventListener("click",()=>goToDay(+el.getAttribute("data-i"))));
+}
+document.getElementById("q").addEventListener("input",renderLog);
+catSel.addEventListener("change",renderLog);
+
+// ---------- unmapped
+(function(){
+  const un = uniq.filter(n=>PLACES[n][2]==null).sort((a,b)=>VISITS[b].length-VISITS[a].length||a.localeCompare(b));
+  document.getElementById("unmapped").innerHTML = un.map(n=>'<div>'+chip(n)+' <small style="color:#8C6A7A">'+VISITS[n].length+'× · '+esc(PLACES[n][4])+'</small></div>').join("");
+})();
+
+initMap(); draw(null); nowAll(); renderLog();
+</script>
+</body>
+</html>
